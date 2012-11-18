@@ -1,0 +1,12 @@
+{
+  "name": "random-json",
+  "description": "Create a random JSON object for testing",
+  "version": "0.0.1",
+  "author": "Max Krohn <themax@gmail.com>",
+  "dependencies": {
+  },
+  "keywords": ["random", "testing"],
+  "repository": "git://github.com/maxtaco/node-random-json.git",
+  "main": "lib/main",
+  "engines": { "node": ">= 0.4.1" }
+}
