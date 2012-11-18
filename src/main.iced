@@ -1,13 +1,14 @@
-
 crypto = require 'crypto'
+
+##-----------------------------------------------------------------------
 
 exports.Generator = class Generator
 
-  random_byte : (cb) ->
+  byte : (cb) ->
     await crypto.randomBytes 1, defer ex, buf
     cb buf[0]
 
-  random_int : (cb, signed) ->
+  integer : (cb, signed) ->
     await crypto.randomBytes 4, defer ex, buf
     r = 0
     for i in [0...4]
@@ -16,42 +17,42 @@ exports.Generator = class Generator
     r = 0 - r if buf[3] >= 128 and signed
     cb r
 
-  random_float : (cb) ->
-    await @random_int defer(n), true
-    await @random_int defer d
+  float : (cb) ->
+    await @integer defer(n), true
+    await @integer defer d
     d = 1 if d is 0
     cb n/d
 
-  random_string : (n, cb) ->
+  string : (n, cb) ->
     if not n
-      await @random_int defer n
+      await @integer defer n
       n = n % 200
     await crypto.randomBytes n, defer ex, buf
     cb buf.toString 'base64'
 
-  random_array : (n, d, cb) ->
+  array : (n, cb, d) ->
     if not n
-      await @random_int defer n
+      await @integer defer n
       n = n % 10
     r = []
     for i in [0...n]
-      await @generate d+1, defer x
+      await @json defer(x), d+1
       r[i] = x
     cb r
 
-  random_obj : (n, d, cb) ->
+  obj : (n, cb, d = 0) ->
     if not n
-      await @random_int defer n
+      await @integer defer n
       n %= 8
     r = {}
     for i in [0..n]
-      await @random_string 10, defer k
-      await @generate d+1, defer v
+      await @string 10, defer k
+      await @json defer(v), d+1
       r[k]= v
     cb r
     
-  generate : (d, cb) ->
-    await @random_byte defer b
+  json: (cb, d = 0) ->
+    await @byte defer b
     b %= 8
     ret = null
     
@@ -63,17 +64,36 @@ exports.Generator = class Generator
       when 1 then r = true
       when 2 then r = null
       when 3
-        await @random_int defer(r), true
+        await @integer defer(r), true
       when 4
-        await @random_float defer r
+        await @float defer r
       when 5
-        await @random_string null, defer r
+        await @string null, defer r
       when 6
-        await @random_array null, d, defer r
+        await @array null, defer(r), d
       when 7
-        await @random_obj null, d, defer r
+        await @obj null, defer(r), d
     cb r
 
-g = new Generator()
-await g.random_array null, 0, defer o
-console.log o
+##-----------------------------------------------------------------------
+
+exports.json = (cb) ->
+  g = new Generator()
+  await g.json defer o
+  cb o
+
+##-----------------------------------------------------------------------
+
+exports.obj = (cb, n = null) ->
+  g = new Generator()
+  await g.obj n, defer o
+  cb o
+
+##-----------------------------------------------------------------------
+
+# for testing....
+if false
+  await exports.obj defer o
+  console.log o
+
+##-----------------------------------------------------------------------
