@@ -55,9 +55,10 @@ exports.Generator = class Generator
     await @byte defer b
     b %= 8
     ret = null
-    
-    if d > 4 and b > 5
-      b %= 5
+
+    # Don't go more than 4 levels deep. Cut if off by
+    # not allowing recursive structures at level 5.
+    b %= 5 if d > 4 and b > 5
       
     switch b
       when 0 then r = false
