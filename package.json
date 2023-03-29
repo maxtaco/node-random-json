@@ -1,12 +1,21 @@
 {
   "name": "random-json",
   "description": "Create a random JSON object for testing",
-  "version": "0.0.2",
+  "version": "3.0.2",
   "author": "Max Krohn <themax@gmail.com>",
   "dependencies": {
+    "iced-runtime-3": "^3.0.5"
   },
-  "keywords": ["random", "testing"],
+  "keywords": [
+    "random",
+    "testing"
+  ],
   "repository": "git://github.com/maxtaco/node-random-json.git",
   "main": "lib/main",
-  "engines": { "node": ">= 0.4.1" }
+  "engines": {
+    "node": ">= 0.4.1"
+  },
+  "devDependencies": {
+    "iced-coffee-script-3": "^112.8.1"
+  }
 }
